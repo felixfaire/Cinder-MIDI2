@@ -11,11 +11,12 @@
 
 namespace cinder { namespace midi {
 	
-	Message::Message(){
-	
+	Message::Message()
+    {
 	}
 	
-	Message& Message::copy(const Message& other){
+	Message& Message::copy( const Message& other )
+    {
 		port = other.port;
 		channel = other.channel;
 		status = other.status;

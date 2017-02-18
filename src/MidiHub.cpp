@@ -36,19 +36,23 @@
 namespace cinder { namespace midi {
 	
 	// --------------------------------------------------------------------------------------
-	Hub::Hub() {
+	Hub::Hub()
+    {
 		this->connectAll();
 	}
 	
 	// --------------------------------------------------------------------------------------
-	Hub::~Hub() {
+	Hub::~Hub()
+    {
 		this->disconnectAll();
 	}
 	
 	// --------------------------------------------------------------------------------------
-	void Hub::disconnectAll() {
-		for ( int i = 0 ; i < midiInPool.size() ; i++ )
+	void Hub::disconnectAll()
+    {
+		for ( int i = 0; i < midiInPool.size(); i++ )
 			delete midiInPool[i];
+        
 		midiInPool.clear();
 		/*
 		 for (int i = 0 ; i < midiOutPool.size() ; i++)
@@ -58,19 +62,19 @@ namespace cinder { namespace midi {
 	}
 	
 	// --------------------------------------------------------------------------------------
-	void Hub::connectAll() {
-		
-		for ( int i = 0 ; i < midii.getPortCount() ; i++ )
+	void Hub::connectAll()
+    {
+		for( int i = 0; i < midii.getPortCount(); i++ )
 		{
-			if (this->isDeviceConnected(midii.getPortName(i)))
+			if( this->isDeviceConnected( midii.getPortName( i ) ) )
 				continue;
 			
-			printf("MIDI HUB: connecting to %i: %s\n",i,midii.getPortName(i).c_str());
+			printf( "MIDI HUB: connecting to %i: %s\n", i, midii.getPortName( i ).c_str() );
 			
 			// Connect IN
 			midi::Input *in = new midi::Input();
-			in->openPort(i);
-			midiInPool.push_back(in);
+			in->openPort( i );
+			midiInPool.push_back( in );
 			
 			// Connect OUT
 			/*
@@ -93,14 +97,16 @@ namespace cinder { namespace midi {
 		
 		// new devices?
 		//printf("MIDI CHECK...\n");
-		if ( midiInPool.size() != midii.getPortCount() )
+		if( midiInPool.size() != midii.getPortCount() )
 			this->connectAll();
 	}
 	
 	// --------------------------------------------------------------------------------------
-	bool Hub::isDeviceConnected(std::string _name) {
-		for (int i = 0 ; i < midiInPool.size() ; i++)
-			if (midiInPool[i]->getName() == _name)
+	bool Hub::isDeviceConnected( std::string _name )
+    {
+    
+		for( int i = 0; i < midiInPool.size(); i++ )
+			if( midiInPool[i]->getName() == _name )
 				return true;
 		/*
 		 for (int i = 0 ; i < midiOutPool.size() ; i++)

@@ -43,7 +43,7 @@ class MidiOut {
 public:
 	
 	/// Set the output client name (optional).
-	MidiOut(std::string const& name="Cinder-MIDI Client");
+	MidiOut( std::string const& name = "Cinder-MIDI Client" );
 	virtual ~MidiOut();
 	
 	/// \section Global Port Info
@@ -59,13 +59,13 @@ public:
 	
 	/// Get the name of an output port by it's number
 	/// \return "" if number is invalid
-	std::string getPortName(unsigned int portNumber) const;
+	std::string getPortName( unsigned int portNumber ) const;
 	
 	/// \section Connection
 	
 	/// Connect to an output port.
 	/// Setting port = 0 will open the first available
-	bool openPort(unsigned int portNumber=0);
+	bool openPort( unsigned int portNumber = 0 );
 	
 	/// Create and connect to a virtual output port (MacOS and Linux ALSA only).
 	/// allows for connections between software
@@ -73,7 +73,7 @@ public:
 	///	note: an open virtual port ofxMidiOut object cannot see it's virtual
 	///       own virtual port when listing ports
 	///
-	bool openVirtualPort(std::string const& portName="ofxMidi Virtual Output");
+	bool openVirtualPort( std::string const& portName = "ofxMidi Virtual Output" );
 	
 	/// Close the port connection
 	void closePort();
@@ -111,19 +111,19 @@ public:
 	/// references:
 	///		http://www.srm.com/qtma/davidsmidispec.html
 	///
-	void sendNoteOn(int channel, int pitch, int velocity=64);
-	void sendNoteOff(int channel, int pitch, int velocity=64);
-	void sendControlChange(int channel, int control, int value);
-	void sendProgramChange(int channel, int value);
-	void sendPitchBend(int channel, int value);
-	void sendPitchBend(int channel, unsigned char lsb, unsigned char msb);
-	void sendAftertouch(int channel, int value);
-	void sendPolyAftertouch(int channel, int pitch, int value);
+	void sendNoteOn( int channel, int pitch, int velocity = 64 );
+	void sendNoteOff( int channel, int pitch, int velocity = 64 );
+	void sendControlChange( int channel, int control, int value );
+	void sendProgramChange( int channel, int value );
+	void sendPitchBend( int channel, int value );
+	void sendPitchBend( int channel, unsigned char lsb, unsigned char msb );
+	void sendAftertouch( int channel, int value );
+	void sendPolyAftertouch( int channel, int pitch, int value );
 	
 	/// Low level access
-	void sendMessage(std::vector<unsigned char>& bytes);
-	void sendMessage(unsigned char status, unsigned char byteOne);
-	void sendMessage(unsigned char status, unsigned char byteOne, unsigned char byteTwo);
+	void sendMessage( std::vector<unsigned char>& bytes );
+	void sendMessage( unsigned char status, unsigned char byteOne );
+	void sendMessage( unsigned char status, unsigned char byteOne, unsigned char byteTwo );
 	
 	static bool sVerboseLogging;
 private:

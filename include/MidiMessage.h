@@ -46,7 +46,7 @@ namespace cinder { namespace midi {
 		int velocity;		//< 0 - 127
 		int control;		//< 0 - 127
 		int value;			//< depends on message status type
-		Message& copy(const Message& other);
+		Message& copy( const Message& other );
 	};
 
 } // namespace midi
