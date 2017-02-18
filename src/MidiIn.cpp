@@ -33,7 +33,7 @@ namespace cinder { namespace midi {
     {
 		std::cout << "MidiIn: " << mNumPorts << " available." << std::endl;
         
-		for ( size_t i = 0; i < mNumPorts; ++i )
+		for( size_t i = 0; i < mNumPorts; ++i )
         {
 			std::cout << i << ": " << mMidiIn->getPortName( i ).c_str() << std::endl;
 			mPortNames.push_back( mMidiIn->getPortName( i ) );
@@ -55,7 +55,7 @@ namespace cinder { namespace midi {
 		if( mNumPorts == 0 )
 			throw MidiExcNoPortsAvailable();
 
-		if (port + 1 > mNumPorts)
+		if( port + 1 > mNumPorts )
 			throw MidiExcPortNotAvailable();
 
 		mPort = port;
@@ -76,55 +76,69 @@ namespace cinder { namespace midi {
 		// solution for proper reading anything above MIDI_TIME_CODE goes to miguelvb
 		// http://forum.openframeworks.cc/t/incorrect-handling-of-midiin-messages-in-ofxmidi-solved/8719
 
-			Message msg;
-			msg.port = mPort;
-			if( (message->at(0) ) >= MIDI_SYSEX) {
-				msg.status = (MidiStatus)(message->at( 0 ) & 0xFF);
-				msg.channel = 0;
-			} else {
-				msg.status = (MidiStatus)(message->at( 0 ) & 0xF0);
-				msg.channel = (int)(message->at( 0 ) & 0x0F)+1;
-			}
-
-
-			msg.port = mPort;
-
-			switch( msg.status ) {
-			case MIDI_NOTE_ON :
-			case MIDI_NOTE_OFF:
-				msg.pitch = (int)message->at( 1 );
-				msg.velocity = (int)message->at( 2 );
-				break;
-			case MIDI_CONTROL_CHANGE:
-				msg.control = (int)message->at( 1 );
-				msg.value = (int)message->at( 2 );
-				break;
-			case MIDI_PROGRAM_CHANGE:
-			case MIDI_AFTERTOUCH:
-				msg.value = (int)message->at( 1 );
-				break;
-			case MIDI_PITCH_BEND:
-				msg.value = (int)(message->at( 2 ) << 7) +
-					(int) message->at( 1 ); // msb + lsb
-				break;
-			case MIDI_POLY_AFTERTOUCH:
-				msg.pitch = (int)message->at( 1 );
-				msg.value = (int)message->at( 2 );
-				break;
-			default:
-				break;
-			}
-        
-            midiThreadSignal.emit( msg );
-        
-            if ( mDispatchToMainThread )
-                ci::app::App::get()->dispatchAsync( [this, msg](){ midiSignal.emit( msg ); });
-		}
-
-		unsigned int Input::getPort() const
+        Message msg;
+        msg.port = mPort;
+    
+        if( (message->at(0) ) >= MIDI_SYSEX)
         {
-			return mPort;
-		}
+            msg.status = (MidiStatus)(message->at( 0 ) & 0xFF);
+            msg.channel = 0;
+        }
+        else
+        {
+            msg.status = (MidiStatus)(message->at( 0 ) & 0xF0);
+            msg.channel = (int)(message->at( 0 ) & 0x0F)+1;
+        }
 
-	} // namespace midi
+
+        switch( msg.status )
+        {
+            case MIDI_NOTE_ON:
+                msg.pitch = (int)message->at( 1 );
+                msg.velocity = (int)message->at( 2 );
+                break;
+                
+            case MIDI_NOTE_OFF:
+                msg.pitch = (int)message->at( 1 );
+                msg.velocity = (int)message->at( 2 );
+                break;
+                
+            case MIDI_CONTROL_CHANGE:
+                msg.control = (int)message->at( 1 );
+                msg.value = (int)message->at( 2 );
+                break;
+                
+            case MIDI_PROGRAM_CHANGE:
+                msg.value = (int)message->at( 1 );
+                break;
+            
+            case MIDI_AFTERTOUCH:
+                msg.value = (int)message->at( 1 );
+                break;
+                
+            case MIDI_PITCH_BEND:
+                msg.value = (int)(message->at( 2 ) << 7) + (int) message->at( 1 ); // msb + lsb
+                break;
+                
+            case MIDI_POLY_AFTERTOUCH:
+                msg.pitch = (int)message->at( 1 );
+                msg.value = (int)message->at( 2 );
+                break;
+                
+            default:
+                break;
+        }
+    
+        midiThreadSignal.emit( msg );
+    
+        if( mDispatchToMainThread )
+            ci::app::App::get()->dispatchAsync( [this, msg](){ midiSignal.emit( msg ); });
+    }
+
+    unsigned int Input::getPort() const
+    {
+        return mPort;
+    }
+
+} // namespace midi
 } // namespace cinder

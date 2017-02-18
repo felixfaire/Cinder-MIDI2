@@ -42,23 +42,24 @@ void MidiTestApp::midiListener( midi::Message msg )
     // This will be called on on the main thread and
     // safe to use with update and draw.
     
-	switch (msg.status)
+	switch( msg.status )
 	{
-	case MIDI_NOTE_ON:
-		notes[msg.pitch] = msg.velocity;
-		status = "Pitch: " + toString(msg.pitch) + "\n" + 
-			"Velocity: " + toString(msg.velocity);
-		break;
-	case MIDI_NOTE_OFF:
-        notes[msg.pitch] = 0;
-		break;
-	case MIDI_CONTROL_CHANGE:
-		cc[msg.control] = msg.value;
-		status = "Control: " + toString(msg.control) + "\n" + 
-			"Value: " + toString(msg.value);
-		break;
-	default:
-		break;
+        case MIDI_NOTE_ON:
+            notes[msg.pitch] = msg.velocity;
+            status = "Pitch: " + toString( msg.pitch ) + "\n" + "Velocity: " + toString( msg.velocity );
+            break;
+            
+        case MIDI_NOTE_OFF:
+            notes[msg.pitch] = 0;
+            break;
+            
+        case MIDI_CONTROL_CHANGE:
+            cc[msg.control] = msg.value;
+            status = "Control: " + toString( msg.control ) + "\n" + "Value: " + toString( msg.value );
+            break;
+            
+        default:
+            break;
 	}
 
 }
@@ -68,9 +69,9 @@ void MidiTestApp::setup()
 	mInput.listPorts();
 	console() << "NUMBER OF PORTS: " << mInput.getNumPorts() << endl;
     
-	if (mInput.getNumPorts() > 0) 
+	if( mInput.getNumPorts() > 0 )
 	{
-		for (int i = 0; i < mInput.getNumPorts(); i++)
+		for( int i = 0; i < mInput.getNumPorts(); i++ )
 			console() << mInput.getPortName(i) << endl;
 		
 		mInput.openPort(0);
@@ -83,13 +84,13 @@ void MidiTestApp::setup()
         mInput.midiThreadSignal.connect( [this](midi::Message msg){ midiThreadListener( msg ); });
     }
 
-	for (int i = 0; i < 127; i++)
+	for( int i = 0; i < 127; i++ )
 	{
-		notes.push_back(0);
-		cc.push_back(0);
+		notes.push_back( 0 );
+		cc.push_back( 0 );
 	}
     
-	mFont = Font("Arial", 25);
+	mFont = Font( "Arial", 25 );
 }
 
 void MidiTestApp::mouseDown( MouseEvent event )
@@ -105,26 +106,27 @@ void MidiTestApp::draw()
 	// clear out the window with black
 	gl::clear( Color( 0, 0, 0 ) );
 	gl::pushMatrices();
-	gl::translate(getWindowCenter());
+	gl::translate( getWindowCenter() );
     
-	for (int i = 0; i < notes.size(); i++)
+	for( int i = 0; i < notes.size(); i++ )
 	{
-		float x = 200*sin((i*2.83) * M_PI / 180);
-		float y = 200*cos((i*2.83) * M_PI / 180);
-		float lx = (200 - cc[i])*sin((i*2.83) * M_PI / 180);
-		float ly = (200 - cc[i])*cos((i*2.83) * M_PI / 180);
+        const float radius = 200.0f;
+        const float theta = (i * 2.83f) * M_PI / 180.0f;
+		const float x = radius * sin( theta );
+		const float y = radius * cos( theta );
+		const float lx = (radius - (float)cc[i]) * sin( theta );
+		const float ly = (radius - (float)cc[i]) * cos( theta );
 
-		gl::color(Color(1,1,1));
-		gl::drawStrokedCircle(vec2(x, y), 5+(notes[i]/4));
-		gl::drawLine(vec2(x, y), vec2(lx, ly));
-		gl::color(Color(notes[i], notes[i], notes[i]));
-		gl::drawSolidCircle(vec2(x, y), 5 + (notes[i] / 4));
+		gl::color( Color( 1.0f, 1.0f, 1.0f ) );
+		gl::drawStrokedCircle( vec2( x, y ), 5.0f + (float)(notes[i] / 4) );
+		gl::drawLine( vec2( x, y ), vec2( lx, ly ) );
+		gl::color( Color( notes[i], notes[i], notes[i] ) );
+		gl::drawSolidCircle( vec2( x, y ), 5.0f + (float)(notes[i] / 4));
 		
 	}
 	
-	
 	gl::popMatrices();
-	gl::drawStringCentered(status, getWindowCenter(), Color(1,1,1), mFont);
+	gl::drawStringCentered( status, getWindowCenter(), Color( 1.0f, 1.0f, 1.0f ), mFont );
 }
 
 
